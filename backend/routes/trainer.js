@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser');
-const Trainer = require('../models/trainer');
+const trainerService = require('../services/trainer-service');
+const auth = require("../middleware/auth");
+const { admin, user } = require("../middleware/roles");
 
-router.use(bodyParser.json());
 /**
  * @swagger
  * tags:
@@ -19,7 +19,7 @@ router.use(bodyParser.json());
  *     tags: [Trainer]
  *     parameters:
  *       - in: query
- *         name: name
+ *         name: username
  *         required: true
  *         schema:
  *           type: string
@@ -41,9 +41,9 @@ router.use(bodyParser.json());
  *         description: Internal Server Error
  */
 
-router.get('/', async (req, res) => {
+router.get('/', [auth, user], async (req, res) => {
     try {
-        const trainer = await Trainer.findOne({ name: req.query.name });
+        const trainer = await trainerService.getTrainerByName(req.query.username);
         if (!trainer) {
             return res.status(404).json({ message: 'Trainer not found' });
         }
@@ -54,13 +54,11 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-
 /**
  * @swagger
- * /api/trainer:
+ * /api/trainer/signup:
  *   post:
- *     summary: Creates a trainer
+ *     summary: Signup as a trainer
  *     tags: [Trainer]
  *     requestBody:
  *      required: true
@@ -69,7 +67,57 @@ router.get('/', async (req, res) => {
  *              schema:
  *                  type: object
  *                  properties:
- *                      name:
+ *                      username:
+ *                          type: string
+ *                      password:
+ *                          type: string
+ *                      email:
+ *                          type: string
+ *                      birthday:
+ *                          type: string
+ *                          format: date
+ *     responses:
+ *       201:
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *       400:
+ *         description: Bad Request
+ *       500:
+ *         description: Internal Server Error
+ */
+
+router.post('/signup', async (req, res) => {
+    try {
+        // Call the trainerService to create a new trainer
+        const trainer = await trainerService.createTrainer({
+            username: req.body.username.trim(),
+            password: req.body.password,
+            email: req.body.email.trim(),
+            birthday: new Date(req.body.birthday),
+        });
+        res.status(200).json(trainer);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/trainer/login:
+ *   post:
+ *     summary: login as a trainer
+ *     tags: [Trainer]
+ *     requestBody:
+ *      required: true
+ *      content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      username:
  *                          type: string
  *                      password:
  *                          type: string
@@ -84,13 +132,15 @@ router.get('/', async (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
-router.post('/', async(req, res) => {
-    try{
-        const trainer = await Trainer.create(req.body)
-        res.status(200).json(trainer)
-    } catch(error){
+router.post('/login', async (req, res) => {
+    try {
+        // Call the trainerService to authenticate the user and generate a JWT token
+        const { token } = await trainerService.authenticateTrainer(req.body.username, req.body.password);
+        // Return the token in the response
+        res.status(200).json({ token });
+    } catch (error) {
         console.log(error.message);
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 });
 

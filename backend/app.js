@@ -18,13 +18,25 @@ const swaggerOptions = {
             title: 'Pokemon Battle API',
             description: 'Pokemon battle information',
             version: '1.0.0',
-            servers: ["http://localhost:1434"],
+            servers: [{ url: 'http://localhost:1434' }],
         },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [{ bearerAuth: [] }],
     },
     apis: ['./routes/*.js'], // Path to the API docs
 };
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+
+    const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Use trainerRouter middleware
