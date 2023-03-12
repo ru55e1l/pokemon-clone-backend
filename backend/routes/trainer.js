@@ -1,17 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const Trainer = require('../schemas/trainerSchema');
+const Trainer = require('../models/trainer');
 
 router.use(bodyParser.json());
 /**
  * @swagger
+ * tags:
+ *   name: Trainer
+ *   description: API for managing Trainers
+ */
+
+/**
+ * @swagger
  * /api/trainer:
  *   get:
- *     summary: Returns a trainer by username
+ *     summary: Returns a trainer by name
+ *     tags: [Trainer]
  *     parameters:
  *       - in: query
- *         name: username
+ *         name: name
  *         required: true
  *         schema:
  *           type: string
@@ -35,7 +43,7 @@ router.use(bodyParser.json());
 
 router.get('/', async (req, res) => {
     try {
-        const trainer = await Trainer.findOne({ username: req.query.username });
+        const trainer = await Trainer.findOne({ name: req.query.name });
         if (!trainer) {
             return res.status(404).json({ message: 'Trainer not found' });
         }
@@ -53,6 +61,7 @@ router.get('/', async (req, res) => {
  * /api/trainer:
  *   post:
  *     summary: Creates a trainer
+ *     tags: [Trainer]
  *     requestBody:
  *      required: true
  *      content:

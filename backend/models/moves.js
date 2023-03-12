@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const movesSchema = new mongoose.Schema({
+const moves = new mongoose.Schema({
     name: { type: String, required: true },
     type: { type: String, required: true },
     power: { type: Number, required: true },
@@ -11,4 +11,4 @@ const movesSchema = new mongoose.Schema({
     target: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Moves', movesSchema);
+module.exports = mongoose.model('Moves', moves);

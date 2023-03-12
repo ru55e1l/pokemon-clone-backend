@@ -4,6 +4,7 @@ const express = require("express");
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const trainerRouter = require('./routes/trainer');
+const pokemonRouter = require('./routes/pokemon');
 const mongoose = require('mongoose');
 
 
@@ -28,6 +29,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Use trainerRouter middleware
 app.use('/api/trainer', trainerRouter);
+app.use('/api/pokemon', pokemonRouter);
 
 mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to database'))

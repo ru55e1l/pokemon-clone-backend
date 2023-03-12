@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const activePokemonSchema = new mongoose.Schema({
+const activePokemon = new mongoose.Schema({
     trainer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Trainer',
@@ -26,4 +26,4 @@ const activePokemonSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('ActivePokemon', activePokemonSchema);
+module.exports = mongoose.model('ActivePokemon', activePokemon);
