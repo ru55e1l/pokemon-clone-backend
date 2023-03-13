@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const Pokemon = require('../models/pokemon');
+const pokemonService = require('../services/pokemon-service');
 
 router.use(bodyParser.json());
 /**
@@ -14,6 +15,129 @@ router.use(bodyParser.json());
 /**
  * @swagger
  * /api/pokemon:
+ *   get:
+ *     summary: Get all Pokemon
+ *     tags: [Pokemon]
+ *     responses:
+ *       '200':
+ *         description: A list of Pokemon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Pokemon'
+ */
+router.get('/', async (req, res) => {
+    try {
+        const allPokemon = await pokemonService.getAllPokemon();
+        res.status(200).json(allPokemon);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/pokemon/{name}:
+ *   get:
+ *     summary: Get a Pokemon by name
+ *     tags: [Pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Name of the Pokemon
+ *     responses:
+ *       '200':
+ *         description: A Pokemon with the specified name
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Pokemon'
+ *       '404':
+ *         description: Pokemon not found
+ */
+router.get('/:name', async (req, res) => {
+    try {
+        const pokemon = await pokemonService.getPokemonByName(req.params.name);
+        res.status(200).json(pokemon);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/pokemon/{name}:
+ *   delete:
+ *     summary: Delete a Pokemon by name
+ *     tags: [Pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Name of the Pokemon
+ *     responses:
+ *       '204':
+ *         description: Pokemon successfully deleted
+ *       '404':
+ *         description: Pokemon not found
+ */
+router.delete('/:name', async (req, res) => {
+    try {
+        await pokemonService.deletePokemonByName(req.params.name);
+        res.status(200).json({message: `Pokemon ${req.params.name} succesfully deleted`});
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/pokemon/{name}:
+ *   put:
+ *     summary: Update a Pokemon by name
+ *     tags: [Pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Name of the Pokemon
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Pokemon'
+ *     responses:
+ *       '200':
+ *         description: Updated Pokemon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Pokemon'
+ *       '404':
+ *         description: Pokemon not found
+ */
+router.put('/:name', async (req, res) => {
+    try {
+        const updatedPokemon = await pokemonService.updatePokemonByName(req.params.name, req.body);
+        res.status(200).json(updatedPokemon);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/pokemon/create:
  *   post:
  *     summary: Create a new Pokemon
  *     tags: [Pokemon]
@@ -77,18 +201,12 @@ router.use(bodyParser.json());
  *                     speed:
  *                       type: number
  */
-router.post('/', async (req, res) => {
+router.post('/create', async (req, res) => {
     try {
-        const { name, type, baseStats } = req.body;
-        const pokemon = await Pokemon.create({
-            name,
-            type,
-            baseStats
-        });
-        res.status(200).json(pokemon);
+        const newPokemon = await pokemonService.createPokemon(req.body);
+        res.status(201).json(newPokemon);
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 });
 

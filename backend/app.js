@@ -1,39 +1,15 @@
 require('dotenv').config();
 const express = require("express");
-
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const trainerRouter = require('./routes/trainer');
 const pokemonRouter = require('./routes/pokemon');
 const mongoose = require('mongoose');
-
+const swaggerOptions = require('./swaggeroptions');
 
 const app = express();
 app.use(express.json()); // for parsing application/json
 const port = process.env.PORT || 1434;
-const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Pokemon Battle API',
-            description: 'Pokemon battle information',
-            version: '1.0.0',
-            servers: [{ url: 'http://localhost:1434' }],
-        },
-        components: {
-            securitySchemes: {
-                bearerAuth: {
-                    type: "http",
-                    scheme: "bearer",
-                    bearerFormat: 'JWT',
-                },
-            },
-        },
-        security: [{ bearerAuth: [] }],
-    },
-    apis: ['./routes/*.js'], // Path to the API docs
-};
-
 
 
     const swaggerDocs = swaggerJsDoc(swaggerOptions);
