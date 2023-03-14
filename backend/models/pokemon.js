@@ -44,6 +44,10 @@ const pokemon = new mongoose.Schema({
             required: true
         }
     },
+    cost: {
+        type: Number,
+        required: false,
+    }
 });
 
 module.exports = mongoose.model('Pokemon', pokemon);

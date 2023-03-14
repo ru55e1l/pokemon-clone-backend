@@ -3,7 +3,8 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const Pokemon = require('../models/pokemon');
 const pokemonService = require('../services/pokemon-service');
-
+const auth = require("../middleware/auth");
+const { admin, user } = require("../middleware/roles");
 router.use(bodyParser.json());
 /**
  * @swagger
@@ -88,7 +89,7 @@ router.get('/:name', async (req, res) => {
  *       '404':
  *         description: Pokemon not found
  */
-router.delete('/:name', async (req, res) => {
+router.delete('/:name', [auth, admin], async (req, res) => {
     try {
         await pokemonService.deletePokemonByName(req.params.name);
         res.status(200).json({message: `Pokemon ${req.params.name} succesfully deleted`});
@@ -126,7 +127,7 @@ router.delete('/:name', async (req, res) => {
  *       '404':
  *         description: Pokemon not found
  */
-router.put('/:name', async (req, res) => {
+router.put('/:name', [auth, admin], async (req, res) => {
     try {
         const updatedPokemon = await pokemonService.updatePokemonByName(req.params.name, req.body);
         res.status(200).json(updatedPokemon);
@@ -146,29 +147,7 @@ router.put('/:name', async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               type:
- *                 type: array
- *                 items:
- *                   type: string
- *               baseStats:
- *                 type: object
- *                 properties:
- *                   hp:
- *                     type: number
- *                   attack:
- *                     type: number
- *                   defense:
- *                     type: number
- *                   specialAttack:
- *                     type: number
- *                   specialDefense:
- *                     type: number
- *                   speed:
- *                     type: number
+ *             $ref: '#/components/schemas/Pokemon'
  *     responses:
  *       '200':
  *         description: A new Pokemon has been created
@@ -201,7 +180,7 @@ router.put('/:name', async (req, res) => {
  *                     speed:
  *                       type: number
  */
-router.post('/create', async (req, res) => {
+router.post('/create', [auth, admin], async (req, res) => {
     try {
         const newPokemon = await pokemonService.createPokemon(req.body);
         res.status(201).json(newPokemon);

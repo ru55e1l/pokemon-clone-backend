@@ -55,6 +55,9 @@ const swaggerOptions = {
                                 },
                             },
                         },
+                        cost: {
+                            type: 'number'
+                        }
                     },
                 },
             },

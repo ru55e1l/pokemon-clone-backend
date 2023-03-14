@@ -40,7 +40,6 @@ const { admin, user } = require("../middleware/roles");
  *       500:
  *         description: Internal Server Error
  */
-
 router.get('/', [auth, user], async (req, res) => {
     try {
         const trainer = await trainerService.getTrainerByName(req.query.username);
@@ -87,7 +86,6 @@ router.get('/', [auth, user], async (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
-
 router.post('/signup', async (req, res) => {
     try {
         // Call the trainerService to create a new trainer

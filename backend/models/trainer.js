@@ -34,7 +34,12 @@ const trainer = new mongoose.Schema({
     activePokemon: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ActivePokemon'
-    }]
+    }],
+    coins: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
 });
 trainer.plugin(passportLocalMongoose);
 module.exports = mongoose.model('Trainer', trainer);
