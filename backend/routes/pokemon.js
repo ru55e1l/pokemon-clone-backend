@@ -9,7 +9,7 @@ router.use(bodyParser.json());
 /**
  * @swagger
  * tags:
- *   name: Pokemon
+ *   name: pokemon
  *   description: API for managing Pokemon
  */
 
@@ -18,7 +18,7 @@ router.use(bodyParser.json());
  * /api/pokemon:
  *   get:
  *     summary: Get all Pokemon
- *     tags: [Pokemon]
+ *     tags: [pokemon]
  *     responses:
  *       '200':
  *         description: A list of Pokemon
@@ -31,7 +31,7 @@ router.use(bodyParser.json());
  */
 router.get('/', async (req, res) => {
     try {
-        const allPokemon = await pokemonService.getAllPokemon();
+        const allPokemon = await pokemonService.getAllDocuments();
         res.status(200).json(allPokemon);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
  * /api/pokemon/{name}:
  *   get:
  *     summary: Get a Pokemon by name
- *     tags: [Pokemon]
+ *     tags: [pokemon]
  *     parameters:
  *       - in: path
  *         name: name
@@ -75,7 +75,7 @@ router.get('/:name', async (req, res) => {
  * /api/pokemon/{name}:
  *   delete:
  *     summary: Delete a Pokemon by name
- *     tags: [Pokemon]
+ *     tags: [pokemon]
  *     parameters:
  *       - in: path
  *         name: name
@@ -103,7 +103,7 @@ router.delete('/:name', [auth, admin], async (req, res) => {
  * /api/pokemon/{name}:
  *   put:
  *     summary: Update a Pokemon by name
- *     tags: [Pokemon]
+ *     tags: [pokemon]
  *     parameters:
  *       - in: path
  *         name: name
@@ -141,7 +141,7 @@ router.put('/:name', [auth, admin], async (req, res) => {
  * /api/pokemon/create:
  *   post:
  *     summary: Create a new Pokemon
- *     tags: [Pokemon]
+ *     tags: [pokemon]
  *     requestBody:
  *       required: true
  *       content:

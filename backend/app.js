@@ -2,10 +2,13 @@ require('dotenv').config();
 const express = require("express");
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const trainerRouter = require('./routes/trainer');
-const pokemonRouter = require('./routes/pokemon');
 const mongoose = require('mongoose');
 const swaggerOptions = require('./swaggeroptions');
+
+// routes
+const trainerRouter = require('./routes/trainer');
+const pokemonRouter = require('./routes/pokemon');
+const activePokemonRouter = require('./routes/active-pokemon');
 
 const app = express();
 app.use(express.json()); // for parsing application/json
@@ -18,6 +21,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Use trainerRouter middleware
 app.use('/api/trainer', trainerRouter);
 app.use('/api/pokemon', pokemonRouter);
+app.use('/api/active-pokemon', activePokemonRouter);
 
 mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to database'))

@@ -3,9 +3,9 @@ class GenericService {
         this.model = model;
     }
 
-    async getAllDocuments(query = {}) {
+    async getAllDocuments() {
         try {
-            const documents = await this.model.find(query);
+            const documents = await this.model.find();
             return documents;
         } catch (error) {
             throw new Error(error.message);
@@ -60,6 +60,46 @@ class GenericService {
             throw new Error(error.message);
         }
     };
+
+    async getDocumentById(id) {
+        try {
+            const document = await this.model.findById(id);
+            if (!document) {
+                return null;
+            }
+            return document;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async deleteDocumentById(id) {
+        try {
+            const deletedDocument = await this.model.findByIdAndDelete(id);
+            if (!deletedDocument) {
+                throw new Error(`Document with id ${id} not found`);
+            }
+            return deletedDocument;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateDocumentById(id, newData) {
+        try {
+            const existingDocument = await this.model.findById(id);
+            if (!existingDocument) {
+                throw new Error(`Document not found`);
+            }
+
+            const updatedDocumentData = Object.assign({}, existingDocument.toObject(), newData);
+            const updatedDocument = await this.model.findByIdAndUpdate(id, { $set: updatedDocumentData }, { new: true });
+            return updatedDocument;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
 }
 
 module.exports = GenericService;

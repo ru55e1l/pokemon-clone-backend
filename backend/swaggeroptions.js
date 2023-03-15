@@ -10,8 +10,8 @@ const swaggerOptions = {
         components: {
             securitySchemes: {
                 bearerAuth: {
-                    type: "http",
-                    scheme: "bearer",
+                    type: 'http',
+                    scheme: 'bearer',
                     bearerFormat: 'JWT',
                 },
             },
@@ -56,8 +56,48 @@ const swaggerOptions = {
                             },
                         },
                         cost: {
-                            type: 'number'
-                        }
+                            type: 'number',
+                        },
+                    },
+                },
+                ActivePokemon: {
+                    type: 'object',
+                    required: ['trainer', 'pokemon', 'level', 'moves', 'active', 'exp', 'levelMultiplier'],
+                    properties: {
+                        id: {
+                            type: 'string',
+                        },
+                        trainer: {
+                            type: 'string',
+                            description: 'The ID of the trainer who owns the active Pokemon',
+                        },
+                        pokemon: {
+                            type: 'string',
+                            description: 'The ID of the Pokemon that is active',
+                        },
+                        exp: {
+                            type: 'number',
+                            description: 'The experience points of the active Pokemon',
+                        },
+                        levelMultiplier: {
+                            type: 'number',
+                            description: 'The level multiplier of the active Pokemon',
+                        },
+                        level: {
+                            type: 'number',
+                            description: 'The level of the active Pokemon',
+                        },
+                        moves: {
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                description: 'The ID of a move that the active Pokemon knows',
+                            },
+                        },
+                        active: {
+                            type: 'boolean',
+                            description: 'Whether the active Pokemon is currently in a battle',
+                        },
                     },
                 },
             },

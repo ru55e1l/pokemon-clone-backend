@@ -39,14 +39,7 @@ class PokemonService extends GenericService {
                     throw new Error(`Invalid Pokemon type(s): ${invalidTypes.join(', ')}`);
                 }
             }
-
-            const existingPokemon = await this.getDocumentByField({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
-            if (!existingPokemon) {
-                throw new Error(`Pokemon with name ${name} not found`);
-            }
-
-            const updatedPokemonData = Object.assign({}, existingPokemon.toObject(), pokemonData);
-            const updatedPokemon = await this.updateDocumentByField({ name: { $regex: new RegExp(`^${name}$`, 'i') } }, updatedPokemonData);
+            const updatedPokemon = await this.updateDocumentByField({ name: { $regex: new RegExp(`^${name}$`, 'i') } }, pokemonData);
             return updatedPokemon;
         } catch (error) {
             throw new Error(error.message);
@@ -55,12 +48,6 @@ class PokemonService extends GenericService {
 
     async createPokemon(pokemonData){
         try {
-            // Check if all types are valid
-            const invalidTypes = pokemonData.type.filter(type => !validTypes.includes(type));
-            if (invalidTypes.length > 0) {
-                throw new Error(`Invalid Pokemon type(s): ${invalidTypes.join(', ')}`);
-            }
-
             const newPokemon = await this.createDocument(pokemonData);
             return newPokemon;
         } catch (error) {
