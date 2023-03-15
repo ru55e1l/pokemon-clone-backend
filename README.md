@@ -1,55 +1,47 @@
-# Pokemon Battle API
+# Pokemon Battles Game Clone
 
-This is a RESTful API for a Pokemon battle application, built using Node.js, Express.js, and MongoDB. It provides endpoints for creating and managing trainers, Pokemon, moves, and battles.
+This is a clone of the popular Pokemon battles game, currently in production. The game has a REST API for CRUD calls and WebSocket for the actual battling section. The frontend of the game will be a website using React or other JS frontend frameworks.
 
 ## Getting Started
 
-To get started with this project, follow these steps:
+To start the game, use the following command: 
 
-1. Clone the repository: `git clone https://github.com/ru55e1l/Pokemon-Battle-Clone.git`
-2. Install the dependencies: `npm install`
-3. Set up the environment variables by creating a `.env` file in the root directory and adding the following:
+npm run dev
 
-DB_CONNECTION_STRING=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority
-PORT=<port>
+javascript
+Copy code
+
+Please note that you need to create a `.ENV` file with the following environment variables: 
+
+DB_CONNECTION_STRING=yourconnectionstring
+SECRET=yoursecret
 
 markdown
 Copy code
 
-4. Run the server: `npm start`
+## Documentation
 
-## Endpoints
+We have Swagger documentation for all endpoints. You can access it via the `/api-docs` route.
 
-This API provides the following endpoints:
+## Contributing
 
-### Trainers
+If you want to contribute or work on the project, please contact me at toneyrl@mail.uc.edu. 
 
-- `GET /api/trainers`: Gets a list of all trainers.
-- `GET /api/trainers/:id`: Gets a specific trainer by ID.
-- `POST /api/trainers`: Creates a new trainer.
-- `PUT /api/trainers/:id`: Updates an existing trainer by ID.
-- `DELETE /api/trainers/:id`: Deletes an existing trainer by ID.
+## Deployment
 
-### Pokemon
+Eventually, the game will be deployed, and a small deployment will be available for free.
 
-- `GET /api/pokemon`: Gets a list of all Pokemon.
-- `GET /api/pokemon/:id`: Gets a specific Pokemon by ID.
-- `POST /api/pokemon`: Creates a new Pokemon.
-- `PUT /api/pokemon/:id`: Updates an existing Pokemon by ID.
-- `DELETE /api/pokemon/:id`: Deletes an existing Pokemon by ID.
+## Code Structure
 
-### Moves
+The main file of the application is `app.js`, which sets up the server, the routes, and connects to the database. The routes are divided into three files: `trainer.js`, `pokemon.js`, and `active-pokemon.js`. 
 
-- `GET /api/moves`: Gets a list of all moves.
-- `GET /api/moves/:id`: Gets a specific move by ID.
-- `POST /api/moves`: Creates a new move.
-- `PUT /api/moves/:id`: Updates an existing move by ID.
-- `DELETE /api/moves/:id`: Deletes an existing move by ID.
+## Technologies
 
-### Battles
+- Node.js
+- Express.js
+- Mongoose (MongoDB)
+- Swagger
 
-- `GET /api/battles`: Gets a list of all battles.
-- `GET /api/battles/:id`: Gets a specific battle by ID.
-- `POST /api/battles`: Creates a new battle.
-- `PUT /api/battles/:id`: Updates an existing battle by ID.
-- `DELETE /api/battles/:id`: Deletes an existing battle by ID.
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
