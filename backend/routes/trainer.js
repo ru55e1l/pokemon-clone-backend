@@ -42,7 +42,7 @@ const { admin, user } = require("../middleware/roles");
  */
 router.get('/', [auth, user], async (req, res) => {
     try {
-        const trainer = await trainerService.getTrainerByName(req.query.username);
+        const trainer = await trainerService.getTrainerByUsername(req.query.username);
         if (!trainer) {
             return res.status(404).json({ message: 'Trainer not found' });
         }

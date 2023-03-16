@@ -166,4 +166,37 @@ router.put('/:id', [auth, admin], async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/active-pokemon/equip/{id}:
+ *   put:
+ *     summary: Update an active-pokemon by ID
+ *     tags: [active-pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the active-pokemon
+ *     responses:
+ *       '200':
+ *         description: Updated active-pokemon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActivePokemon'
+ *       '404':
+ *         description: active-pokemon not found
+ */
+router.put('/equip/:id', [auth, user], async (req, res) => {
+    try {
+        const updatedActivePokemon = await activePokemonService.equipPokemon(req.params.id)
+        res.status(200).json({message: 'Pokemon Equipped'});
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
+
+
 module.exports = router;

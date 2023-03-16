@@ -56,6 +56,19 @@ class TrainerService extends GenericService {
 
         return { token };
     }
+    async getTrainerByUsername(username) {
+        try {
+            const trainer = await this.getDocumentByField({ 'username': username });
+            if (!trainer) {
+                throw new Error(`Trainer with username ${username} not found`);
+            }
+            return trainer;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
 }
+
 
 module.exports = new TrainerService();

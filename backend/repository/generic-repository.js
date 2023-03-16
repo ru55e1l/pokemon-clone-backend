@@ -1,13 +1,11 @@
-const GenericRepository = require('../repository/generic-repository');
-
-class GenericService {
+class GenericRepository {
     constructor(model) {
-        this.repository = new GenericRepository(model);
+        this.model = model;
     }
 
     async getAllDocuments() {
         try {
-            const documents = await this.repository.getAllDocuments();
+            const documents = await this.model.find();
             return documents;
         } catch (error) {
             throw new Error(error.message);
@@ -16,7 +14,7 @@ class GenericService {
 
     async getDocumentByField(query) {
         try {
-            const document = await this.repository.getDocumentByField(query);
+            const document = await this.model.findOne(query);
             if (!document) {
                 return null;
             }
@@ -28,7 +26,7 @@ class GenericService {
 
     async deleteDocumentByField(query) {
         try {
-            const deletedDocument = await this.repository.deleteDocumentByField(query);
+            const deletedDocument = await this.model.findOneAndDelete(query);
             if (!deletedDocument) {
                 throw new Error(`Document not found`);
             }
@@ -40,25 +38,32 @@ class GenericService {
 
     async updateDocumentByField(query, newData) {
         try {
-            const updatedDocument = await this.repository.updateDocumentByField(query, newData);
+            const existingDocument = await this.model.findOne(query);
+            if (!existingDocument) {
+                throw new Error(`Document not found`);
+            }
+
+            const updatedDocumentData = Object.assign({}, existingDocument.toObject(), newData);
+            const updatedDocument = await this.model.findOneAndUpdate(query, { $set: updatedDocumentData }, { new: true });
             return updatedDocument;
         } catch (error) {
             throw new Error(error.message);
         }
     }
 
-    async createDocument(documentData) {
+    async createDocument(documentData){
         try {
-            const newDocument = await this.repository.createDocument(documentData);
-            return newDocument;
+            const newDocument = new this.model(documentData);
+            const savedDocument = await newDocument.save();
+            return savedDocument;
         } catch (error) {
             throw new Error(error.message);
         }
-    }
+    };
 
     async getDocumentById(id) {
         try {
-            const document = await this.repository.getDocumentById(id);
+            const document = await this.model.findById(id);
             if (!document) {
                 return null;
             }
@@ -70,7 +75,7 @@ class GenericService {
 
     async deleteDocumentById(id) {
         try {
-            const deletedDocument = await this.repository.deleteDocumentById(id);
+            const deletedDocument = await this.model.findByIdAndDelete(id);
             if (!deletedDocument) {
                 throw new Error(`Document with id ${id} not found`);
             }
@@ -82,12 +87,19 @@ class GenericService {
 
     async updateDocumentById(id, newData) {
         try {
-            const updatedDocument = await this.repository.updateDocumentById(id, newData);
+            const existingDocument = await this.model.findById(id);
+            if (!existingDocument) {
+                throw new Error(`Document not found`);
+            }
+
+            const updatedDocumentData = Object.assign({}, existingDocument.toObject(), newData);
+            const updatedDocument = await this.model.findByIdAndUpdate(id, { $set: updatedDocumentData }, { new: true });
             return updatedDocument;
         } catch (error) {
             throw new Error(error.message);
         }
     }
+
 }
 
-module.exports = GenericService;
+module.exports = GenericRepository;

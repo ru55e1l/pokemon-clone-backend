@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
+const validTypes = require("../constants/pokemon-types");
 
 const trainer = new mongoose.Schema({
     username: {
@@ -33,7 +34,18 @@ const trainer = new mongoose.Schema({
     },
     activePokemon: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ActivePokemon'
+        ref: 'ActivePokemon',
+        validate: {
+            validator: async function(id) {
+                const activePokemonService = require('../services/active-pokemon-service');
+                const activePokemon = await activePokemonService.getDocumentById(id);
+                if(!activePokemon){
+                    return false
+                }
+                return true;
+            },
+            message: props => `Invalid ActivePokemon Id`
+        }
     }],
     coins: {
         type: Number,
@@ -41,5 +53,9 @@ const trainer = new mongoose.Schema({
         default: 0,
     },
 });
+trainer.pre('save', function(){
+    this.activePokemon = [];
+});
+
 trainer.plugin(passportLocalMongoose);
 module.exports = mongoose.model('Trainer', trainer);

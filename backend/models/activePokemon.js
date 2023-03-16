@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const trainerService = require('../services/trainer-service');
-const pokemonService = require('../services/pokemon-service');
 
 const activePokemon = new mongoose.Schema({
     nickname: {
@@ -11,6 +9,7 @@ const activePokemon = new mongoose.Schema({
         ref: 'Trainer',
         validate: {
             validator: async function(value) {
+                const trainerService = require('../services/trainer-service');
                 const trainer = await trainerService.getDocumentByField({_id: value});
                 return trainer !== null;
             },
@@ -23,6 +22,7 @@ const activePokemon = new mongoose.Schema({
         ref: 'Pokemon',
         validate: {
             validator: async function(value) {
+                const pokemonService = require('../services/pokemon-service');
                 const pokemon = await pokemonService.getDocumentByField({_id: value});
                 return pokemon !== null;
             },
@@ -57,6 +57,7 @@ const activePokemon = new mongoose.Schema({
 activePokemon.pre('save', function(next) {
     this.exp = 1;
     this.level = 1;
+    this.active = false;
     next();
 });
 
