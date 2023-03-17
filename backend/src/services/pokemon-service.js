@@ -1,4 +1,4 @@
-const GenericService = require('../services/generic-service');
+const GenericService = require('./generic-service');
 const Pokemon = require('../models/pokemon');
 const validTypes = require('../constants/pokemon-types');
 

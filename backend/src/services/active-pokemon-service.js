@@ -2,7 +2,7 @@ const GenericService = require('../repository/generic-repository');
 const activePokemon = require('../models/activePokemon');
 const validTypes = require('../constants/pokemon-types');
 const xpConstants = require('../constants/xpConstants');
-const trainerService = require('../services/trainer-service');
+const trainerService = require('./trainer-service');
 
 class ActivePokemonService extends GenericService {
     constructor() {
