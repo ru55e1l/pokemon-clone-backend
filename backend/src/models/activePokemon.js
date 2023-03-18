@@ -34,7 +34,7 @@ const activePokemon = new mongoose.Schema({
         type: Number,
         required: false,
     },
-    active: {
+    equipped: {
         type: Boolean,
         required: true
     },

@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const activePokemonService = require('../services/active-pokemon-service');
-const { user, admin } = require("../middleware/roles");
-const auth = require("../middleware/auth");
+const { user, admin } = require("../middleware/auth/roles");
+const auth = require("../middleware/auth/auth");
 const pokemonService = require("../services/pokemon-service");
 router.use(bodyParser.json());
 
@@ -36,7 +36,7 @@ const isOwnerOrAdmin = async (req, res, next) => {
  * @swagger
  * /api/active-pokemon/equipped-pokemon:
  *   get:
- *     summary: Get the active Pokemon of the authenticated user
+ *     summary: Get the equipped Pokemon of the authenticated user
  *     tags: [active-pokemon]
  *     responses:
  *       '200':
@@ -53,7 +53,35 @@ const isOwnerOrAdmin = async (req, res, next) => {
 router.get('/equipped-pokemon', [auth, user], async (req, res) => {
     try {
         const userId = req.user.id;
-        const myActivePokemon = await activePokemonService.getDocumentByField({ trainer: userId, active: true });
+        const myActivePokemon = await activePokemonService.getDocumentsByField({ trainer: userId, equipped: true });
+        res.status(200).json(myActivePokemon);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/active-pokemon/active-pokemon:
+ *   get:
+ *     summary: Get the equipped Pokemon of the authenticated user
+ *     tags: [active-pokemon]
+ *     responses:
+ *       '200':
+ *         description: A list of active Pokemon for the authenticated user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ActivePokemon'
+ *       '500':
+ *         description: Internal server error
+ */
+router.get('/active-pokemon', [auth, user], async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const myActivePokemon = await activePokemonService.getDocumentsByField({ trainer: userId});
         res.status(200).json(myActivePokemon);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -175,14 +203,26 @@ router.post('/', [auth, admin], async (req, res) => {
  *       '404':
  *         description: active-pokemon not found
  */
-router.delete('/:id', [auth, admin], async (req, res) => {
+// active-pokemon.route.js
+router.delete('/:id', [auth, user, isOwnerOrAdmin], async (req, res) => {
     try {
+        const checkResult = await activePokemonService.isPokemonEquipped(req.params.id);
+
+        if (checkResult.error === 'not_found') {
+            return res.status(404).json({ message: checkResult.message });
+        }
+
+        if (checkResult.error === 'equipped') {
+            return res.status(400).json({ message: checkResult.message });
+        }
+
         await activePokemonService.deleteDocumentById(req.params.id);
-        res.status(200).json({message: `active-pokemon ${req.params.id} successfully deleted`}).send();
+        res.status(200).json({ message: `active-pokemon ${req.params.id} successfully deleted` }).send();
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 });
+
 
 /**
  * @swagger
@@ -286,7 +326,55 @@ router.put('/unequip/:id', [auth, user, isOwnerOrAdmin], async (req, res) => {
     }
 });
 
+// ... other imports and router definition
 
+/**
+ * @swagger
+ * /api/active-pokemon/{id}/nickname:
+ *   put:
+ *     summary: Update or add a nickname to the specified active Pokemon
+ *     tags: [active-pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newNickname:
+ *                 type: string
+ *                 example: "Sparky"
+ *     responses:
+ *       '200':
+ *         description: The updated active Pokemon with the new nickname
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActivePokemon'
+ *       '404':
+ *         description: Active Pokemon not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.put('/:id/nickname', async (req, res) => {
+    try {
+        const activePokemonId = req.params.id;
+        const newNickname = req.body.newNickname;
+
+        const updatedActivePokemon = await activePokemonService.updateNickname(activePokemonId, newNickname);
+        res.status(200).json(updatedActivePokemon);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// ... other routes
 
 
 module.exports = router;

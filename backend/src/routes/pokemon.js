@@ -3,8 +3,8 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const Pokemon = require('../models/pokemon');
 const pokemonService = require('../services/pokemon-service');
-const auth = require("../middleware/auth");
-const { admin, user } = require("../middleware/roles");
+const auth = require("../middleware/auth/auth");
+const { admin, user } = require("../middleware/auth/roles");
 router.use(bodyParser.json());
 /**
  * @swagger

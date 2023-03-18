@@ -102,6 +102,15 @@ class GenericService {
             throw new Error(error.message);
         }
     }
+
+    async countDocuments(query) {
+        try {
+            const count = await this.repository.countDocuments(query);
+            return count;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
 
 module.exports = GenericService;

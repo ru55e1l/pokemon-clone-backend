@@ -113,6 +113,15 @@ class GenericRepository {
         }
     }
 
+    async countDocuments(query) {
+        try {
+            const count = await this.model.countDocuments(query);
+            return count;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
 }
 
 module.exports = GenericRepository;

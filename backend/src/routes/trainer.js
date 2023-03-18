@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const trainerService = require('../services/trainer-service');
-const auth = require("../middleware/auth");
-const { admin, user } = require("../middleware/roles");
+const auth = require("../middleware/auth/auth");
+const { admin, user } = require("../middleware/auth/roles");
 
 /**
  * @swagger

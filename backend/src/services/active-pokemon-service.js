@@ -17,6 +17,14 @@ class ActivePokemonService extends GenericService {
 
         }
     }
+    async countEquippedPokemonByTrainer(trainerId) {
+        try {
+            const equippedPokemonCount = await this.countDocuments({ trainer: trainerId, equipped: true });
+            return equippedPokemonCount;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
     async equipPokemon(activePokemonId) {
         try {
             const activePokemon = await this.getDocumentById(activePokemonId);
@@ -26,18 +34,19 @@ class ActivePokemonService extends GenericService {
                 throw new Error('Active Pokemon or Trainer not found');
             }
 
-            if (activePokemon.active) {
+            if (activePokemon.equipped) {
                 throw new Error('The Pokemon is already equipped');
             }
 
-            if (trainer.activePokemon.length >= 6) {
+            // Get the number of equipped Pokemon for the trainer
+            const equippedPokemonCount = await this.countEquippedPokemonByTrainer(trainer._id);
+
+            if (equippedPokemonCount >= 6) {
                 throw new Error('The Trainer already has 6 active Pokemon');
             }
 
-            activePokemon.active = true;
+            activePokemon.equipped = true;
             await this.updateDocumentById(activePokemonId, activePokemon);
-            trainer.activePokemon.push(activePokemonId);
-            await trainerService.updateDocumentById(trainer._id, trainer);
 
         } catch (error) {
             throw error;
@@ -46,25 +55,18 @@ class ActivePokemonService extends GenericService {
     async unequipPokemon(activePokemonId) {
         try {
             const activePokemon = await this.getDocumentById(activePokemonId);
-            const trainer = await trainerService.getDocumentById(activePokemon.trainer);
 
-            if (!activePokemon || !trainer) {
-                throw new Error('Active Pokemon or Trainer not found');
+            if (!activePokemon) {
+                throw new Error('Active Pokemon not found');
             }
 
-            if (!activePokemon.active) {
+            if (!activePokemon.equipped) {
                 throw new Error('The Pokemon is already unequipped');
             }
 
-            activePokemon.active = false;
+            activePokemon.equipped = false;
             await this.updateDocumentById(activePokemonId, activePokemon);
 
-            const index = trainer.activePokemon.indexOf(activePokemonId);
-            if (index > -1) {
-                trainer.activePokemon.splice(index, 1);
-            }
-
-            await trainerService.updateDocumentById(trainer._id, trainer);
 
         } catch (error) {
             throw error;
@@ -77,13 +79,46 @@ class ActivePokemonService extends GenericService {
                 throw new Error('Trainer not found');
             }
 
-            const activePokemon = await this.getDocumentsByField({ trainer: trainer._id, active: true });
+            const activePokemon = await this.getDocumentsByField({ trainer: trainer._id, equipped: true });
             return activePokemon;
         } catch (error) {
             throw error;
         }
     }
 
+    // activePokemonService.js
+    async isPokemonEquipped(id) {
+        try {
+            const activePokemon = await this.getDocumentById(id);
+
+            if (!activePokemon) {
+                return { error: 'not_found', message: `active-pokemon ${id} not found` };
+            }
+
+            if (activePokemon.equipped) {
+                return { error: 'equipped', message: `active-pokemon ${id} is equipped and cannot be deleted` };
+            }
+
+            return { error: null, message: '' };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateNickname(id, newNickname){
+        try {
+            const activePokemon = await this.getDocumentById(id);
+            if (!activePokemon) {
+                throw new Error('Active Pokemon not found');
+            }
+
+            activePokemon.nickname = newNickname;
+            await this.updateDocumentById(id, activePokemon);
+            return activePokemon;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 
 
 }
