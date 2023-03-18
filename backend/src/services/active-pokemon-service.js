@@ -17,20 +17,75 @@ class ActivePokemonService extends GenericService {
 
         }
     }
-    async equipPokemon(activePokemonId){
-        try{
+    async equipPokemon(activePokemonId) {
+        try {
             const activePokemon = await this.getDocumentById(activePokemonId);
             const trainer = await trainerService.getDocumentById(activePokemon.trainer);
+
+            if (!activePokemon || !trainer) {
+                throw new Error('Active Pokemon or Trainer not found');
+            }
+
+            if (activePokemon.active) {
+                throw new Error('The Pokemon is already equipped');
+            }
+
+            if (trainer.activePokemon.length >= 6) {
+                throw new Error('The Trainer already has 6 active Pokemon');
+            }
 
             activePokemon.active = true;
             await this.updateDocumentById(activePokemonId, activePokemon);
             trainer.activePokemon.push(activePokemonId);
-            await trainerService.updateDocumentById(trainer.id, trainer);
+            await trainerService.updateDocumentById(trainer._id, trainer);
 
-        } catch (error){
+        } catch (error) {
             throw error;
         }
     }
+    async unequipPokemon(activePokemonId) {
+        try {
+            const activePokemon = await this.getDocumentById(activePokemonId);
+            const trainer = await trainerService.getDocumentById(activePokemon.trainer);
+
+            if (!activePokemon || !trainer) {
+                throw new Error('Active Pokemon or Trainer not found');
+            }
+
+            if (!activePokemon.active) {
+                throw new Error('The Pokemon is already unequipped');
+            }
+
+            activePokemon.active = false;
+            await this.updateDocumentById(activePokemonId, activePokemon);
+
+            const index = trainer.activePokemon.indexOf(activePokemonId);
+            if (index > -1) {
+                trainer.activePokemon.splice(index, 1);
+            }
+
+            await trainerService.updateDocumentById(trainer._id, trainer);
+
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getActivePokemonByTrainerName(trainerName) {
+        try {
+            const trainer = await trainerService.getDocumentByField({ username: trainerName });
+            if (!trainer) {
+                throw new Error('Trainer not found');
+            }
+
+            const activePokemon = await this.getDocumentsByField({ trainer: trainer._id, active: true });
+            return activePokemon;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+
 }
 
 module.exports = new ActivePokemonService();

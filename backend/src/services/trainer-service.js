@@ -50,7 +50,7 @@ class TrainerService extends GenericService {
 
         // Generate a JWT token with the trainer's ID and roles
         const token = jwt.sign({
-            id: trainer.id,
+            id: trainer._id,
             roles: trainer.roles,
         }, process.env.SECRET, { expiresIn: "90m" });
 

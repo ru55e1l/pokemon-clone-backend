@@ -38,10 +38,17 @@ const activePokemon = new mongoose.Schema({
         type: Boolean,
         required: true
     },
+    stats: {
+        hp: Number,
+        attack: Number,
+        defense: Number,
+        specialAttack: Number,
+        specialDefense: Number,
+        speed: Number
+    },
     levelMultiplier: {
         type: Number,
-        required: true,
-        default: 1
+        required: false,
     },
     level: {
         type: Number,
@@ -54,7 +61,37 @@ const activePokemon = new mongoose.Schema({
     }],
 });
 
-activePokemon.pre('save', function(next) {
+function calculateStats(baseStats) {
+    const stats = {};
+    for (const key in baseStats) {
+        const value = baseStats[key];
+        const minValue = value - value * 0.5;
+        const maxValue = value + value * 0.5;
+        stats[key] = Math.floor(Math.random() * (maxValue - minValue + 1) + minValue);
+    }
+    return stats;
+}
+
+function calculateLevelMultiplier(stats, baseStats) {
+    let totalPercentage = 0;
+    let statCount = 0;
+    for (const key in stats) {
+        if (baseStats.hasOwnProperty(key)) {
+            const percentage = stats[key] / baseStats[key];
+            totalPercentage += percentage;
+            statCount++;
+        }
+    }
+    const averagePercentage = totalPercentage / statCount;
+    return 1 / averagePercentage;
+}
+
+activePokemon.pre('save', async function (next) {
+    const pokemonService = require('../services/pokemon-service');
+    const pokemon = await pokemonService.getDocumentByField({ _id: this.pokemon });
+
+    this.stats = calculateStats(pokemon.baseStats);
+    this.levelMultiplier = calculateLevelMultiplier(this.stats, pokemon.baseStats);
     this.exp = 1;
     this.level = 1;
     this.active = false;

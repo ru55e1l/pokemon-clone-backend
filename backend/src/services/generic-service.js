@@ -26,6 +26,20 @@ class GenericService {
         }
     }
 
+    async getDocumentsByField(query) {
+        try {
+            const documents = await this.repository.getDocumentsByField(query);
+            if (!documents) {
+                return null;
+            }
+            return documents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+
+
     async deleteDocumentByField(query) {
         try {
             const deletedDocument = await this.repository.deleteDocumentByField(query);

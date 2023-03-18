@@ -24,6 +24,19 @@ class GenericRepository {
         }
     }
 
+    async getDocumentsByField(query) {
+        try {
+            const documents = await this.model.find(query).exec();
+            if (!documents) {
+                return null;
+            }
+            return documents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+
     async deleteDocumentByField(query) {
         try {
             const deletedDocument = await this.model.findOneAndDelete(query);
