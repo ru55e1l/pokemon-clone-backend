@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const Pokemon = require('../models/pokemon');
+const PokemonRouter = require('../models/pokemon');
 const pokemonService = require('../services/pokemon-service');
 const auth = require("../middleware/auth/auth");
 const { admin, user } = require("../middleware/auth/roles");
@@ -10,24 +10,24 @@ router.use(bodyParser.json());
  * @swagger
  * tags:
  *   name: pokemon
- *   description: API for managing Pokemon
+ *   description: API for managing PokemonRouter
  */
 
 /**
  * @swagger
  * /api/pokemon:
  *   get:
- *     summary: Get all Pokemon
+ *     summary: Get all PokemonRouter
  *     tags: [pokemon]
  *     responses:
  *       '200':
- *         description: A list of Pokemon
+ *         description: A list of PokemonRouter
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Pokemon'
+ *                 $ref: '#/components/schemas/PokemonRouter'
  */
 router.get('/', async (req, res) => {
     try {
@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
  * @swagger
  * /api/pokemon/{name}:
  *   get:
- *     summary: Get a Pokemon by name
+ *     summary: Get a PokemonRouter by name
  *     tags: [pokemon]
  *     parameters:
  *       - in: path
@@ -50,16 +50,16 @@ router.get('/', async (req, res) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: Name of the Pokemon
+ *         description: Name of the PokemonRouter
  *     responses:
  *       '200':
- *         description: A Pokemon with the specified name
+ *         description: A PokemonRouter with the specified name
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Pokemon'
+ *               $ref: '#/components/schemas/PokemonRouter'
  *       '404':
- *         description: Pokemon not found
+ *         description: PokemonRouter not found
  */
 router.get('/:name', async (req, res) => {
     try {
@@ -74,7 +74,7 @@ router.get('/:name', async (req, res) => {
  * @swagger
  * /api/pokemon/{name}:
  *   delete:
- *     summary: Delete a Pokemon by name
+ *     summary: Delete a PokemonRouter by name
  *     tags: [pokemon]
  *     parameters:
  *       - in: path
@@ -82,12 +82,12 @@ router.get('/:name', async (req, res) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: Name of the Pokemon
+ *         description: Name of the PokemonRouter
  *     responses:
  *       '204':
- *         description: Pokemon successfully deleted
+ *         description: PokemonRouter successfully deleted
  *       '404':
- *         description: Pokemon not found
+ *         description: PokemonRouter not found
  */
 router.delete('/:name', [auth, admin], async (req, res) => {
     try {
@@ -102,7 +102,7 @@ router.delete('/:name', [auth, admin], async (req, res) => {
  * @swagger
  * /api/pokemon/{name}:
  *   put:
- *     summary: Update a Pokemon by name
+ *     summary: Update a PokemonRouter by name
  *     tags: [pokemon]
  *     parameters:
  *       - in: path
@@ -110,22 +110,22 @@ router.delete('/:name', [auth, admin], async (req, res) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: Name of the Pokemon
+ *         description: Name of the PokemonRouter
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Pokemon'
+ *             $ref: '#/components/schemas/PokemonRouter'
  *     responses:
  *       '200':
- *         description: Updated Pokemon
+ *         description: Updated PokemonRouter
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Pokemon'
+ *               $ref: '#/components/schemas/PokemonRouter'
  *       '404':
- *         description: Pokemon not found
+ *         description: PokemonRouter not found
  */
 router.put('/:name', [auth, admin], async (req, res) => {
     try {
@@ -140,17 +140,17 @@ router.put('/:name', [auth, admin], async (req, res) => {
  * @swagger
  * /api/pokemon/create:
  *   post:
- *     summary: Create a new Pokemon
+ *     summary: Create a new PokemonRouter
  *     tags: [pokemon]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Pokemon'
+ *             $ref: '#/components/schemas/PokemonRouter'
  *     responses:
  *       '200':
- *         description: A new Pokemon has been created
+ *         description: A new PokemonRouter has been created
  *         content:
  *           application/json:
  *             schema:

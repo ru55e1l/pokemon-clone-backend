@@ -100,6 +100,49 @@ const swaggerOptions = {
                         },
                     },
                 },
+                Move: {
+                    type: 'object',
+                    required: ['name', 'type', 'power', 'accuracy', 'pp', 'effect', 'target'],
+                    properties: {
+                        id: {
+                            type: 'string',
+                        },
+                        name: {
+                            type: 'string',
+                            description: 'The name of the move',
+                        },
+                        type: {
+                            type: 'string',
+                            description: 'The type of the move, e.g., Fire, Water, etc.',
+                        },
+                        power: {
+                            type: 'number',
+                            description: 'The power of the move',
+                        },
+                        accuracy: {
+                            type: 'number',
+                            description: 'The accuracy of the move',
+                        },
+                        pp: {
+                            type: 'number',
+                            description: 'The Power Points (PP) of the move',
+                        },
+                        priority: {
+                            type: 'number',
+                            description: 'The priority of the move',
+                            default: 0,
+                        },
+                        effect: {
+                            type: 'string',
+                            description: 'The effect of the move, e.g., Burns the target, etc.',
+                        },
+                        target: {
+                            type: 'string',
+                            description: 'The target of the move, e.g., Single target, All enemies, etc.',
+                        },
+                    },
+                },
+
             },
         },
         security: [{ bearerAuth: [] }],
