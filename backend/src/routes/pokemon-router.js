@@ -29,7 +29,7 @@ router.use(bodyParser.json());
  *               items:
  *                 $ref: '#/components/schemas/PokemonRouter'
  */
-router.get('/', async (req, res) => {
+router.get('/', [auth, user], async (req, res) => {
     try {
         const allPokemon = await pokemonService.getAllDocuments();
         res.status(200).json(allPokemon);
@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
  *       '404':
  *         description: PokemonRouter not found
  */
-router.get('/:name', async (req, res) => {
+router.get('/:name', [auth, user], async (req, res) => {
     try {
         const pokemon = await pokemonService.getPokemonByName(req.params.name);
         res.status(200).json(pokemon);

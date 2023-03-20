@@ -113,7 +113,7 @@ router.get('/active-pokemon', [auth, user], async (req, res) => {
  *         description: Internal server error
  */
 
-router.get('/by-trainer/:username', async (req, res) => {
+router.get('/by-trainer/:username', [auth, user] ,async (req, res) => {
     try {
         const username = req.params.username;
         const activePokemon = await activePokemonService.getActivePokemonByTrainerName(username);
@@ -362,7 +362,7 @@ router.put('/unequip/:id', [auth, user, isOwnerOrAdmin], async (req, res) => {
  *       '500':
  *         description: Internal server error
  */
-router.put('/:id/nickname', async (req, res) => {
+router.put('/:id/nickname', [auth, user, isOwnerOrAdmin], async (req, res) => {
     try {
         const activePokemonId = req.params.id;
         const newNickname = req.body.newNickname;
@@ -374,7 +374,83 @@ router.put('/:id/nickname', async (req, res) => {
     }
 });
 
-// ... other routes
+/**
+ * @swagger
+ * /api/active-pokemon/{id}/addmove/{moveId}:
+ *   put:
+ *     summary: Add a move to an active Pokemon
+ *     tags: [active-pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the active Pokemon
+ *       - in: path
+ *         name: moveId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the move to add
+ *     responses:
+ *       '200':
+ *         description: Move added to active Pokemon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActivePokemon'
+ *       '400':
+ *         description: Invalid move or active Pokemon ID
+ */
+router.put('/:id/addmove/:moveId', [auth, user, isOwnerOrAdmin], async (req, res) => {
+    try {
+        const activePokemon = await activePokemonService.addMoveToActivePokemon(req.params.id, req.params.moveId);
+        res.status(200).json(activePokemon);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/active-pokemon/{id}/removemove/{moveId}:
+ *   put:
+ *     summary: Remove a move from an active Pokemon
+ *     tags: [active-pokemon]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the active Pokemon
+ *       - in: path
+ *         name: moveId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the move to remove
+ *     responses:
+ *       '200':
+ *         description: Move removed from active Pokemon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ActivePokemon'
+ *       '400':
+ *         description: Invalid move or active Pokemon ID
+ */
+router.put('/:id/removemove/:moveId', [auth, user, isOwnerOrAdmin], async (req, res) => {
+    try {
+        const activePokemon = await activePokemonService.removeMoveFromActivePokemon(req.params.id, req.params.moveId);
+        res.status(200).json(activePokemon);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+
 
 
 module.exports = router;

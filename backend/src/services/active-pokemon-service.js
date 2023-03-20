@@ -1,8 +1,11 @@
 const GenericService = require('../repository/generic-repository');
 const activePokemon = require('../models/activePokemon');
-const validTypes = require('../constants/pokemon-types');
+const validTypes = require('../constants/validTypes');
 const xpConstants = require('../constants/xpConstants');
 const trainerService = require('./trainer-service');
+const MoveService = require('./move-service');
+const PokemonService = require('./pokemon-service');
+
 
 class ActivePokemonService extends GenericService {
     constructor() {
@@ -118,6 +121,45 @@ class ActivePokemonService extends GenericService {
         } catch (error) {
             throw new Error(error.message);
         }
+    }
+
+    async addMoveToActivePokemon(activePokemonId, moveId) {
+        // Fetch ActivePokemon, Pokemon, and Move
+        const activePokemon = await this.getDocumentById(activePokemonId);
+        const pokemon = await PokemonService.getDocumentById(activePokemon.pokemon);
+        const move = await MoveService.getDocumentById(moveId);
+
+        // Check if the move type is one of the Pokemon types
+        if (!pokemon.type.includes(move.type)) {
+            throw new Error('Move type does not match Pokemon type');
+        }
+
+        // Check if the move is already known by the ActivePokemon
+        if (activePokemon.moves.some(move => move._id.toString() === moveId)) {
+            throw new Error('ActivePokemon already knows this move');
+        }
+
+        // Add the move to the ActivePokemon
+        activePokemon.moves.push(moveId);
+        await activePokemon.save();
+
+        return activePokemon;
+    }
+
+    async removeMoveFromActivePokemon(activePokemonId, moveId) {
+        const activePokemon = await this.getDocumentById(activePokemonId);
+
+        // Check if the move is known by the ActivePokemon
+        const moveIndex = activePokemon.moves.findIndex(move => move._id.toString() === moveId);
+        if (moveIndex === -1) {
+            throw new Error('ActivePokemon does not know this move');
+        }
+
+        // Remove the move from the ActivePokemon
+        activePokemon.moves.splice(moveIndex, 1);
+        await activePokemon.save();
+
+        return activePokemon;
     }
 
 

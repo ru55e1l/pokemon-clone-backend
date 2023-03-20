@@ -1,6 +1,6 @@
 const GenericService = require('./generic-service');
 const Pokemon = require('../models/pokemon');
-const validTypes = require('../constants/pokemon-types');
+const validTypes = require('../constants/validTypes');
 
 class PokemonService extends GenericService {
     constructor() {

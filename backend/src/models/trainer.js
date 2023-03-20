@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
-const validTypes = require("../constants/pokemon-types");
+const validTypes = require("../constants/validTypes");
 
 const trainer = new mongoose.Schema({
     username: {

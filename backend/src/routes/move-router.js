@@ -82,17 +82,17 @@ router.get('/:id', [auth, user], async (req, res) => {
  *             $ref: '#/components/schemas/Move'
  *     responses:
  *       '201':
- *         description: move created
+ *         description: Move created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Move'
  *       '400':
- *         description: invalid move data
+ *         description: Invalid move data
  */
 router.post('/', [auth, admin], async (req, res) => {
     try {
-        const move = await moveService.createDocument(req.body);
+        const move = await moveService.createMove(req.body);
         res.status(201).json(move);
     } catch (error) {
         res.status(400).json({ message: error.message });

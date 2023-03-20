@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const validTypes = require('../constants/pokemon-types');
+const validTypes = require('../constants/validTypes');
 
 const pokemon = new mongoose.Schema({
     name: {
