@@ -35,7 +35,37 @@ router.get('/', [auth, user], async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
+/**
+ * @swagger
+ * /api/move/{type}:
+ *   get:
+ *     summary: Get moves by type
+ *     tags: [move]
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: type of the move
+ *     responses:
+ *       '200':
+ *         description: a move
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Move'
+ *       '404':
+ *         description: move not found
+ */
+router.get('/:type', [auth, user], async (req, res) => {
+    try {
+        const move = await moveService.getMovesByType(req.params.type);
+        res.status(200).json(move);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+});
 /**
  * @swagger
  * /api/move/{id}:

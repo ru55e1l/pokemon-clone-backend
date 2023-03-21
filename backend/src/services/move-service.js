@@ -48,7 +48,7 @@ class MoveService extends GenericService {
                 throw new Error('Invalid type')
             }
 
-            const moves = await this.getDocumentByField({type: type.toLowerCase()})
+            const moves = await this.getDocumentsByField({type: type.toLowerCase()})
             return moves;
         } catch(error) {
             throw error;
