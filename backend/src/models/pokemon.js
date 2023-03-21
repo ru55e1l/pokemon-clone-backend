@@ -11,6 +11,7 @@ const pokemon = new mongoose.Schema({
     type: {
         type: [String],
         required: true,
+        lowercase: true,
         validate: {
             validator: function(v) {
                 return v.every(type => validTypes.includes(type));

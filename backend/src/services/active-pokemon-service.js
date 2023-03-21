@@ -129,6 +129,14 @@ class ActivePokemonService extends GenericService {
         const pokemon = await PokemonService.getDocumentById(activePokemon.pokemon);
         const move = await MoveService.getDocumentById(moveId);
 
+        if(!move) {
+            throw new Error(`Move ${moveId} does not exist`)
+        }
+
+        if(!activePokemon) {
+            throw new Error(`ActivePokemon ${activePokemonId} does not exist`)
+        }
+
         // Check if the move type is one of the Pokemon types
         if (!pokemon.type.includes(move.type)) {
             throw new Error('Move type does not match Pokemon type');

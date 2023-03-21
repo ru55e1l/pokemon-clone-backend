@@ -32,8 +32,27 @@ class MoveService extends GenericService {
     }
 
     async createMove(moveData) {
-        await this.validateMoveData(moveData);
-        return this.createDocument(moveData);
+        try {
+            await this.validateMoveData(moveData);
+            return this.createDocument(moveData);
+        } catch(error) {
+
+            throw error;
+        }
+    }
+
+    async getMovesByType(type) {
+        try{
+            // Check if valid type
+            if(!validTypes.includes(type)){
+                throw new Error('Invalid type')
+            }
+
+            const moves = await this.getDocumentByField({type: type.toLowerCase()})
+            return moves;
+        } catch(error) {
+            throw error;
+        }
     }
 }
 

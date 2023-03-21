@@ -1,5 +1,7 @@
 const Trainer = require('../models/trainer');
+const RefreshToken = require('../models/refreshToken')
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 const GenericService = require('./generic-service');
 
@@ -49,12 +51,8 @@ class TrainerService extends GenericService {
         }
 
         // Generate a JWT token with the trainer's ID and roles
-        const token = jwt.sign({
-            id: trainer._id,
-            roles: trainer.roles,
-        }, process.env.SECRET, { expiresIn: "90m" });
+        return trainer;
 
-        return { token };
     }
     async getTrainerByUsername(username) {
         try {
@@ -67,6 +65,39 @@ class TrainerService extends GenericService {
             throw new Error(error.message);
         }
     }
+
+    async createRefreshToken(trainerId, device) {
+        // Delete existing refresh tokens for the same trainerId and device
+        await RefreshToken.deleteMany({ trainerId, device });
+
+        // Create a new refresh token
+        const expiresIn = new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)); // 7 days
+        const token = crypto.randomBytes(32).toString('hex');
+
+        const refreshToken = new RefreshToken({
+            token,
+            trainerId,
+            device,
+            expiresAt: expiresIn
+        });
+
+        await refreshToken.save();
+        return refreshToken;
+    }
+
+
+    async validateRefreshToken(token) {
+        const refreshToken = await RefreshToken.findOne({ token });
+        if (!refreshToken) {
+            throw new Error('Invalid refresh token');
+        }
+        return refreshToken;
+    }
+
+    async deleteRefreshToken(token) {
+        await RefreshToken.deleteOne({ token });
+    }
+
 
 }
 

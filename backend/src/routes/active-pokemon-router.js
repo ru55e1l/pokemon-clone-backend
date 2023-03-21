@@ -14,7 +14,7 @@ const isOwnerOrAdmin = async (req, res, next) => {
             return res.status(404).json({ message: "Active Pokemon not found" });
         }
 
-        if (req.user.roles.includes("admin") || activePokemon.trainer.toString() === req.user.id) {
+        if (req.trainer.roles.includes("admin") || activePokemon.trainer.toString() === req.trainer.id) {
             next();
         } else {
             return res.status(403).json({ message: "You are not authorized to perform this action" });
@@ -52,7 +52,7 @@ const isOwnerOrAdmin = async (req, res, next) => {
  */
 router.get('/equipped-pokemon', [auth, user], async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.trainer.id;
         const myActivePokemon = await activePokemonService.getDocumentsByField({ trainer: userId, equipped: true });
         res.status(200).json(myActivePokemon);
     } catch (error) {
@@ -80,7 +80,7 @@ router.get('/equipped-pokemon', [auth, user], async (req, res) => {
  */
 router.get('/active-pokemon', [auth, user], async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.trainer.id;
         const myActivePokemon = await activePokemonService.getDocumentsByField({ trainer: userId});
         res.status(200).json(myActivePokemon);
     } catch (error) {

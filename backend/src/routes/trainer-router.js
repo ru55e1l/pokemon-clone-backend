@@ -132,14 +132,117 @@ router.post('/signup', async (req, res) => {
  */
 router.post('/login', async (req, res) => {
     try {
-        // Call the trainerService to authenticate the user and generate a JWT token
-        const { token } = await trainerService.authenticateTrainer(req.body.username, req.body.password);
-        // Return the token in the response
-        res.status(200).json({ token });
+        const trainer = await trainerService.authenticateTrainer(req.body.username, req.body.password);
+
+        // Get the device identifier (User-Agent header in this case)
+        const device = req.headers['user-agent'] || 'unknown';
+
+        // Create a refresh token for the specific device
+        const refreshToken = await trainerService.createRefreshToken(trainer._id, device);
+
+        // Set the cookies
+        res.cookie('id', trainer._id, {
+            signed: true,
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            secure: process.env.NODE_ENV === 'production',
+        });
+
+        res.cookie('refresh', refreshToken.token, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === 'production',
+        });
+
+        res.status(200).json({ message: 'Login successful' });
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ message: error.message });
     }
 });
+
+
+
+/**
+ * @swagger
+ * /api/trainer/refresh:
+ *   post:
+ *     summary: Refresh the authentication cookie
+ *     tags: [Trainer]
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Token refreshed
+ *       401:
+ *         description: Unauthorized, no refresh token provided or invalid refresh token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No refresh token provided
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+router.post('/refresh', async (req, res) => {
+    try {
+        const oldRefreshToken = req.cookies.refresh;
+
+        if (!oldRefreshToken) {
+            return res.status(401).json({ message: 'No refresh token provided' });
+        }
+
+        const refreshTokenDoc = await trainerService.validateRefreshToken(oldRefreshToken);
+        const trainerId = refreshTokenDoc.trainerId;
+
+        // Delete the old refresh token
+        await trainerService.deleteRefreshToken(oldRefreshToken);
+
+        // Get the device identifier (User-Agent header in this case)
+        const device = req.headers['user-agent'] || 'unknown';
+
+        // Create a new refresh token for the specific device
+        const newRefreshToken = await trainerService.createRefreshToken(trainerId, device);
+
+        res.cookie('id', trainerId, {
+            signed: true,
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            secure: process.env.NODE_ENV === 'production',
+        });
+
+        res.cookie('refresh', newRefreshToken.token, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === 'production',
+        });
+
+        res.status(200).json({ message: 'Token refreshed' });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+
+
 
 module.exports = router;

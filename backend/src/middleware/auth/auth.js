@@ -1,20 +1,28 @@
-// Import dependencies
-const jwt = require("jsonwebtoken");
+const trainerService = require('../../services/trainer-service');
 
-module.exports = (req, res, next) => {
-    const token = req.header("Authorization");
-    if (!token) return res.status(401).send({
-        ok: false,
-        error: "Access denied. No token provided"
-    });
+module.exports = async (req, res, next) => {
+    const trainerId = req.signedCookies.id;
+
+    if (!trainerId) {
+        return res.status(401).send({
+            ok: false,
+            error: "Access denied. No cookie provided"
+        });
+    }
 
     try {
-        const decoded = jwt.verify(token.replace("Bearer ", ""), process.env.SECRET);
-        req.user = decoded;
+        const trainer = await trainerService.getDocumentById(trainerId);
+        if (!trainer) {
+            return res.status(401).send({
+                ok: false,
+                error: "Invalid trainer ID"
+            });
+        }
+        req.trainer = trainer;
     } catch (error) {
         return res.status(401).send({
             ok: false,
-            error: "Token expired"
+            error: "Error fetching trainer"
         });
     }
 
