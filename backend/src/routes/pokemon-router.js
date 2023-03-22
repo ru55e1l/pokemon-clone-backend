@@ -27,7 +27,7 @@ router.use(bodyParser.json());
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/PokemonRouter'
+ *                 $ref: '#/components/schemas/Pokemon'
  */
 router.get('/', [auth, user], async (req, res) => {
     try {
@@ -57,7 +57,7 @@ router.get('/', [auth, user], async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PokemonRouter'
+ *               $ref: '#/components/schemas/Pokemon'
  *       '404':
  *         description: PokemonRouter not found
  */
@@ -116,14 +116,14 @@ router.delete('/:name', [auth, admin], async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/PokemonRouter'
+ *             $ref: '#/components/schemas/Pokemon'
  *     responses:
  *       '200':
  *         description: Updated PokemonRouter
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/PokemonRouter'
+ *               $ref: '#/components/schemas/Pokemon'
  *       '404':
  *         description: PokemonRouter not found
  */
@@ -147,7 +147,7 @@ router.put('/:name', [auth, admin], async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/PokemonRouter'
+ *             $ref: '#/components/schemas/Pokemon'
  *     responses:
  *       '200':
  *         description: A new PokemonRouter has been created

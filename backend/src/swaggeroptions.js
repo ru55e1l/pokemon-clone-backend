@@ -58,6 +58,9 @@ const swaggerOptions = {
                         cost: {
                             type: 'number',
                         },
+                        forSale: {
+                            type: 'boolean',
+                        }
                     },
                 },
                 ActivePokemon: {

@@ -37,7 +37,16 @@ const trainer = new mongoose.Schema({
         required: true,
         default: 0,
     },
+    inBattle: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
 });
+trainer.pre('save', async function (next) {
+    this.inBattle = false;
+});
+
 
 trainer.plugin(passportLocalMongoose);
 module.exports = mongoose.model('Trainer', trainer);

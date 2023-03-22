@@ -48,6 +48,15 @@ const pokemon = new mongoose.Schema({
     cost: {
         type: Number,
         required: false,
+    },
+    forSale: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+    price: {
+        type: Number,
+        required: false,
     }
 });
 

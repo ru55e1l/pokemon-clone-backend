@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const trainerRouter = require('./routes/trainer-router');
 const pokemonRouter = require('./routes/pokemon-router');
 const activePokemonRouter = require('./routes/active-pokemon-router');
+const shopRouter = require('./routes/shop-router');
 
 const moveRouter = require('./routes/move-router');
 
@@ -35,6 +36,7 @@ app.use('/api/trainer', trainerRouter);
 app.use('/api/pokemon', pokemonRouter);
 app.use('/api/active-pokemon', activePokemonRouter);
 app.use('/api/move', moveRouter);
+app.use('/api/shop', shopRouter);
 
 mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to database'))

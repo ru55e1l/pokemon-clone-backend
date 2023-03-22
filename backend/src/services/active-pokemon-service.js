@@ -3,9 +3,8 @@ const activePokemon = require('../models/activePokemon');
 const validTypes = require('../constants/validTypes');
 const xpConstants = require('../constants/xpConstants');
 const trainerService = require('./trainer-service');
-const MoveService = require('./move-service');
-const PokemonService = require('./pokemon-service');
-
+const moveService = require('./move-service');
+const pokemonService = require('./pokemon-service');
 
 class ActivePokemonService extends GenericService {
     constructor() {
@@ -126,8 +125,8 @@ class ActivePokemonService extends GenericService {
     async addMoveToActivePokemon(activePokemonId, moveId) {
         // Fetch ActivePokemon, Pokemon, and Move
         const activePokemon = await this.getDocumentById(activePokemonId);
-        const pokemon = await PokemonService.getDocumentById(activePokemon.pokemon);
-        const move = await MoveService.getDocumentById(moveId);
+        const pokemon = await pokemonService.getDocumentById(activePokemon.pokemon);
+        const move = await moveService.getDocumentById(moveId);
 
         if(!move) {
             throw new Error(`Move ${moveId} does not exist`)
@@ -170,6 +169,29 @@ class ActivePokemonService extends GenericService {
         return activePokemon;
     }
 
+    async createActivePokemon(trainerId, pokemonId) {
+        try {
+            const pokemon = pokemonService.getDocumentById(pokemonId);
+            const trainer = pokemonService.getDocumentById(trainerId);
+
+            if (!pokemon) {
+                throw new Error('Pokemon not found');
+            }
+
+            if (!trainer) {
+                throw new Error('Trainer not found');
+            }
+
+            const activePokemonData = {
+                trainer: trainerId,
+                pokemon: pokemonId,
+            };
+
+            return await this.createDocument(activePokemonData);
+        } catch(Error) {
+            throw Error;
+        }
+    }
 
 }
 

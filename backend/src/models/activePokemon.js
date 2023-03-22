@@ -36,7 +36,7 @@ const activePokemon = new mongoose.Schema({
     },
     equipped: {
         type: Boolean,
-        required: true
+        required: false,
     },
     stats: {
         hp: Number,
