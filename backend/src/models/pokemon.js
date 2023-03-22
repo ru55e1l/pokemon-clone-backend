@@ -46,7 +46,7 @@ const pokemon = new mongoose.Schema({
         }
     },
     cost: {
-        type: Number,
+        type: mongoose.Decimal128,
         required: false,
     },
     forSale: {

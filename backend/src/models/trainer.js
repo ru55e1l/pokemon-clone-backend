@@ -33,7 +33,7 @@ const trainer = new mongoose.Schema({
         default: ['user'],
     },
     coins: {
-        type: Number,
+        type: mongoose.Decimal128,
         required: true,
         default: 0,
     },

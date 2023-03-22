@@ -31,7 +31,7 @@ const activePokemon = new mongoose.Schema({
         required: true
     },
     exp: {
-        type: Number,
+        type: mongoose.Decimal128,
         required: false,
     },
     equipped: {
