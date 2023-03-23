@@ -39,17 +39,11 @@ router.get('/', [auth, user], async (req, res) => {
 
 /**
  * @swagger
- * /api/shop/{trainerId}/{pokemonId}:
+ * /api/shop/{pokemonId}:
  *   post:
  *     summary: Buy a Pokemon using trainer ID and pokemon ID
  *     tags: [shop]
  *     parameters:
- *       - in: path
- *         name: trainerId
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the trainer
  *       - in: path
  *         name: pokemonId
  *         schema:
@@ -82,9 +76,11 @@ router.get('/', [auth, user], async (req, res) => {
  *                 message:
  *                   type: string
  */
-router.post('/:trainerId/:pokemonId', async (req, res) => {
+router.post('/:pokemonId', [auth, user], async (req, res) => {
     try {
-        const { trainerId, pokemonId } = req.params;
+        // Get the trainerId from the req.trainer object
+        const trainerId = req.trainer._id;
+        const pokemonId = req.params.pokemonId;
         const activePokemon = await shopService.buyPokemon(trainerId, pokemonId);
         res.status(200).json(activePokemon);
     } catch (error) {
@@ -95,6 +91,7 @@ router.post('/:trainerId/:pokemonId', async (req, res) => {
         }
     }
 });
+
 
 
 module.exports = router;
