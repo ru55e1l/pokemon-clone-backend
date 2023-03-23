@@ -143,6 +143,10 @@ const swaggerOptions = {
                             type: 'string',
                             description: 'The target of the move, e.g., Single target, All enemies, etc.',
                         },
+                        level: {
+                            type: 'number',
+                            description: 'The level the pokemon must be to be able to unlock the move'
+                        }
                     },
                 },
 

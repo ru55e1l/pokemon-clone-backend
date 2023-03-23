@@ -129,11 +129,11 @@ class ActivePokemonService extends GenericService {
         const move = await moveService.getDocumentById(moveId);
 
         if(!move) {
-            throw new Error(`Move ${moveId} does not exist`)
+            throw new Error(`Move ${moveId} does not exist`);
         }
 
         if(!activePokemon) {
-            throw new Error(`ActivePokemon ${activePokemonId} does not exist`)
+            throw new Error(`ActivePokemon ${activePokemonId} does not exist`);
         }
 
         // Check if the move type is one of the Pokemon types
@@ -146,12 +146,18 @@ class ActivePokemonService extends GenericService {
             throw new Error('ActivePokemon already knows this move');
         }
 
+        // Check if the ActivePokemon's level is high enough to unlock the move
+        if (activePokemon.level < move.level) {
+            throw new Error(`ActivePokemon's level is too low to learn this move. Required level: ${move.level}`);
+        }
+
         // Add the move to the ActivePokemon
         activePokemon.moves.push(moveId);
         await activePokemon.save();
 
         return activePokemon;
     }
+
 
     async removeMoveFromActivePokemon(activePokemonId, moveId) {
         const activePokemon = await this.getDocumentById(activePokemonId);

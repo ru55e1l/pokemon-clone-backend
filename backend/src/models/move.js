@@ -8,7 +8,8 @@ const move = new mongoose.Schema({
     pp: { type: Number, required: true },
     priority: { type: Number, default: 0 },
     effect: { type: String, required: false, lowercase: true },
-    target: { type: String, required: true, lowercase: true }
+    target: { type: String, required: true, lowercase: true },
+    level: {type: Number, required: true, default: 0 }
 });
 
 module.exports = mongoose.model('Move', move);
