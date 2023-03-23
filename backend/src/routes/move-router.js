@@ -131,6 +131,63 @@ router.post('/', [auth, admin], async (req, res) => {
 
 /**
  * @swagger
+ * /api/move/bulk-create:
+ *   post:
+ *     summary: Bulk create Moves
+ *     tags: [move]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/Move'
+ *     responses:
+ *       '201':
+ *         description: Moves have been created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Move'
+ *       '400':
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+// moveRouter.js
+
+// moveRouter.js
+
+router.post('/bulk-create', [auth, admin], async (req, res) => {
+    try {
+        const { newMoves, errorMessages } = await moveService.bulkCreateMoves(req.body);
+        res.status(200).json({ newMoves, errorMessages });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+
+
+/**
+ * @swagger
  * /api/move/{id}:
  *   put:
  *     summary: Update a move

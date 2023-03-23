@@ -16,7 +16,7 @@ class MoveService extends GenericService {
             throw new Error('Move with the same name already exists');
         }
 
-        if (moveData.effect && !validEffects.includes(effect)) {
+        if (moveData.effect && !validEffects.includes(moveData.effect)) {
             throw new Error('Invalid move effect');
         }
 
@@ -54,6 +54,33 @@ class MoveService extends GenericService {
             throw error;
         }
     }
+    // moveService.js
+
+    // moveService.js
+
+    async bulkCreateMoves(moveList) {
+        const newMoveList = [];
+        const errorMessages = [];
+
+        for (const moveData of moveList) {
+            try {
+                await this.validateMoveData(moveData);
+                const newMove = new moves(moveData);
+                await this.createDocument(newMove);
+                newMoveList.push(newMove);
+            } catch (error) {
+                // Store the error message for the failed Move creation
+                errorMessages.push({
+                    name: moveData.name,
+                    message: error.message,
+                });
+            }
+        }
+
+        return { newMoveList, errorMessages };
+    }
+
+
 }
 
 module.exports = new MoveService();

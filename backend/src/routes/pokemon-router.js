@@ -189,4 +189,40 @@ router.post('/create', [auth, admin], async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/pokemon/bulk-create:
+ *   post:
+ *     summary: Create multiple Pokemon
+ *     tags: [pokemon]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               $ref: '#/components/schemas/Pokemon'
+ *     responses:
+ *       '200':
+ *         description: New Pokemon have been created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Pokemon'
+ *       '400':
+ *         description: Bad request
+ */
+router.post('/bulk-create', [auth, admin], async (req, res) => {
+    try {
+        const newPokemonList = await pokemonService.bulkCreatePokemon(req.body);
+        res.status(201).json(newPokemonList);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+
 module.exports = router;

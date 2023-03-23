@@ -7,6 +7,18 @@ class PokemonService extends GenericService {
         super(Pokemon);
     }
 
+    validatePokemonData(pokemonData) {
+        const { type } = pokemonData;
+
+        // Validate each type in the array
+        for (const t of type) {
+            if (!validTypes.includes(t)) {
+                throw new Error(`Invalid type: ${t}`);
+            }
+        }
+    }
+
+
     async getPokemonByName(name) {
         try {
             const pokemon = await this.getDocumentByField({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
@@ -54,6 +66,32 @@ class PokemonService extends GenericService {
             throw new Error(error.message);
         }
     };
+    async bulkCreatePokemon(pokemonList) {
+        const newPokemonList = [];
+        const errorMessages = [];
+
+        for (const pokemonData of pokemonList) {
+            try {
+                // Validate each Pokemon in the list
+                this.validatePokemonData(pokemonData);
+
+                // Create and save each Pokemon
+                const newPokemon = new Pokemon(pokemonData);
+                await this.createDocument(newPokemon);
+                newPokemonList.push(newPokemon);
+            } catch (error) {
+                // Store the error message for the failed Pokemon creation
+                errorMessages.push({
+                    name: pokemonData.name,
+                    message: error.message,
+                });
+            }
+        }
+
+        return { newPokemonList, errorMessages };
+    }
+
+
 }
 
 module.exports = new PokemonService();
