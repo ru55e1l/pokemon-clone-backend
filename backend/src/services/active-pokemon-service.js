@@ -199,6 +199,34 @@ class ActivePokemonService extends GenericService {
         }
     }
 
+    async tradeActivePokemon(activePokemon1Id, activePokemon2Id) {
+        const activePokemon1 = await this.getDocumentById(activePokemon1Id);
+        const activePokemon2 = await this.getDocumentById(activePokemon2Id);
+
+        if (!activePokemon1) {
+            throw new Error(`ActivePokemon with ID ${activePokemon1Id} does not exist`);
+        }
+
+        if (!activePokemon2) {
+            throw new Error(`ActivePokemon with ID ${activePokemon2Id} does not exist`);
+        }
+
+        // Swap trainers
+        const tempTrainer = activePokemon1.trainer;
+        activePokemon1.trainer = activePokemon2.trainer;
+        activePokemon2.trainer = tempTrainer;
+
+        // Save changes
+        await activePokemon1.save();
+        await activePokemon2.save();
+
+        return {
+            activePokemon1: activePokemon1,
+            activePokemon2: activePokemon2
+        };
+    }
+
+
 }
 
 module.exports = new ActivePokemonService();
