@@ -1,4 +1,4 @@
-const ActivePokemonService = require('../../../services/active-pokemon-service');
+const ActivePokemonService = require('../../../services/pokemon/active-pokemon-service');
 const TrainerService = require('../../../services/trainer-service');
 const ActivePokemon = require('../../../models/activePokemon');
 const Trainer = require('../../../models/trainer');

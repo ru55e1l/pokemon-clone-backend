@@ -149,7 +149,54 @@ const swaggerOptions = {
                         }
                     },
                 },
-
+                CompletedBattle: {
+                    type: 'object',
+                    required: ['trainer1', 'trainer2', 'startDate'],
+                    properties: {
+                        id: {
+                            type: 'string',
+                        },
+                        trainer1: {
+                            type: 'string',
+                            description: 'The ID of the first trainer participating in the battle',
+                        },
+                        trainer2: {
+                            type: 'string',
+                            description: 'The ID of the second trainer participating in the battle',
+                        },
+                        winner: {
+                            type: 'string',
+                            description: 'The ID of the winning trainer (if the battle is completed)',
+                        },
+                        startDate: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'The start date and time of the battle',
+                        },
+                        endDate: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'The end date and time of the battle (if the battle is completed)',
+                        },
+                    },
+                },
+                ActiveBattle: {
+                    type: 'object',
+                    required: ['trainer1', 'trainer2'],
+                    properties: {
+                        id: {
+                            type: 'string',
+                        },
+                        trainer1: {
+                            type: 'string',
+                            description: 'The ID of the first trainer participating in the battle',
+                        },
+                        trainer2: {
+                            type: 'string',
+                            description: 'The ID of the second trainer participating in the battle',
+                        }
+                    },
+                }
             },
         },
         security: [{ bearerAuth: [] }],

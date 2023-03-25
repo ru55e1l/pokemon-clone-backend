@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth/auth');
 const { admin, user } = require("../middleware/auth/roles");
-const PokemonService = require('../services/pokemon-service');
-const shopService = require('../services/shop-service');
+const PokemonService = require('../services/pokemon/pokemon-service');
+const shopService = require('../services/pokemon/shop-service');
 
 /**
  * @swagger

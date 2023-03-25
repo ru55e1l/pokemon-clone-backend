@@ -22,7 +22,7 @@ const activePokemon = new mongoose.Schema({
         ref: 'Pokemon',
         validate: {
             validator: async function(value) {
-                const pokemonService = require('../services/pokemon-service');
+                const pokemonService = require('../services/pokemon/pokemon-service');
                 const pokemon = await pokemonService.getDocumentByField({_id: value});
                 return pokemon !== null;
             },
@@ -87,7 +87,7 @@ function calculateLevelMultiplier(stats, baseStats) {
 }
 
 activePokemon.pre('save', async function (next) {
-    const pokemonService = require('../services/pokemon-service');
+    const pokemonService = require('../services/pokemon/pokemon-service');
     const pokemon = await pokemonService.getDocumentByField({ _id: this.pokemon });
 
     this.stats = calculateStats(pokemon.baseStats);

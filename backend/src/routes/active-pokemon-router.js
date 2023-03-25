@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const activePokemonService = require('../services/active-pokemon-service');
+const activePokemonService = require('../services/pokemon/active-pokemon-service');
 const { user, admin } = require("../middleware/auth/roles");
 const auth = require("../middleware/auth/auth");
-const pokemonService = require("../services/pokemon-service");
+const pokemonService = require("../services/pokemon/pokemon-service");
 router.use(bodyParser.json());
 
 const isOwnerOrAdmin = async (req, res, next) => {

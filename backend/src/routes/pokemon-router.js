@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const PokemonRouter = require('../models/pokemon');
-const pokemonService = require('../services/pokemon-service');
+const pokemonService = require('../services/pokemon/pokemon-service');
 const auth = require("../middleware/auth/auth");
 const { admin, user } = require("../middleware/auth/roles");
 router.use(bodyParser.json());

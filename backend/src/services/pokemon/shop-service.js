@@ -1,5 +1,5 @@
 const pokemonService = require('./pokemon-service');
-const trainerService = require('./trainer-service');
+const trainerService = require('../trainer-service');
 const activePokemonService = require('./active-pokemon-service');
 
 class ShopService{

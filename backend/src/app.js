@@ -14,7 +14,7 @@ const trainerRouter = require('./routes/trainer-router');
 const pokemonRouter = require('./routes/pokemon-router');
 const activePokemonRouter = require('./routes/active-pokemon-router');
 const shopRouter = require('./routes/shop-router');
-
+const battleRouter = require('./routes/battle-router');
 const moveRouter = require('./routes/move-router');
 
 const privateKey = fs.readFileSync('key.pem', 'utf8');
@@ -37,6 +37,7 @@ app.use('/api/pokemon', pokemonRouter);
 app.use('/api/active-pokemon', activePokemonRouter);
 app.use('/api/move', moveRouter);
 app.use('/api/shop', shopRouter);
+app.use('/api/battle', battleRouter);
 
 mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to database'))
