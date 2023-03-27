@@ -7,7 +7,7 @@ const battleService = require('../services/battle/battleService');
  * @swagger
  * tags:
  *   name: battle
- *   description: API for managing battles
+ *   description: routes for battle related stuff
  */
 
 /**
