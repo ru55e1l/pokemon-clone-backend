@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const trainerService = require("../services/trainer-service");
 
-const activeBattleSchema = new mongoose.Schema({
+const CompletedBattleSchema = new mongoose.Schema({
     trainer1: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Trainer",
+        ref: 'Trainer',
         required: true,
         validator: async function(value) {
             const trainerService = require('../services/trainer-service');
@@ -14,7 +14,7 @@ const activeBattleSchema = new mongoose.Schema({
     },
     trainer2: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Trainer",
+        ref: 'Trainer',
         required: true,
         validator: async function(value) {
             const trainerService = require('../services/trainer-service');
@@ -22,7 +22,15 @@ const activeBattleSchema = new mongoose.Schema({
             return trainer !== null;
         },
     },
-    // other necessary fields for active battles
+    winner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Trainer',
+        required: false,
+    },
+    endDate: {
+        type: Date,
+        required: false,
+    },
 });
 
-module.exports = mongoose.model("ActiveBattle", activeBattleSchema);
+module.exports = mongoose.model('BattleComplete', CompletedBattleSchema);
