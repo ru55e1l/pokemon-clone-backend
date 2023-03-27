@@ -8,7 +8,6 @@ const https = require('https');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 
-
 // routes
 const trainerRouter = require('./routes/trainer-router');
 const pokemonRouter = require('./routes/pokemon-router');
@@ -28,7 +27,7 @@ app.use(express.json()); // for parsing application/json
 const port = process.env.PORT || 1434;
 
 
-    const swaggerDocs = swaggerJsDoc(swaggerOptions);
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Use trainerRouter middleware
@@ -47,6 +46,3 @@ const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
-
-
-

@@ -31,7 +31,7 @@ router.use(bodyParser.json());
  */
 router.get('/', [auth, user], async (req, res) => {
     try {
-        const allPokemon = await pokemonService.getAllDocuments();
+        const allPokemon = await pokemonService.getAllPokemon();
         res.status(200).json(allPokemon);
     } catch (error) {
         res.status(500).json({ message: error.message });
