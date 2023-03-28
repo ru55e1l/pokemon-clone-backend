@@ -76,24 +76,14 @@ class PokemonService extends GenericService {
 
     async deletePokemonByName(name) {
         try {
-            const cacheKey = 'all_pokemon';
-            const cachedData = await getAsync(cacheKey);
-
-            if (cachedData) {
-                const pokemonList = JSON.parse(cachedData);
-                const updatedPokemonList = pokemonList.filter((p) => p.name.toLowerCase() !== name.toLowerCase());
-
-                if (pokemonList.length === updatedPokemonList.length) {
-                    throw new Error(`Pokemon with name ${name} not found`);
-                }
-
-                await setAsync(cacheKey, JSON.stringify(updatedPokemonList), 3600); // Cache for 1 hour
-            }
-
             const deletedPokemon = await this.deleteDocumentByField({ name: { $regex: new RegExp(`^${name}$`, 'i') } });
-
             if (!deletedPokemon) {
                 throw new Error(`Pokemon with name ${name} not found`);
+            }
+            else {
+                const cacheKey = 'all_pokemon';
+                await client.del(cacheKey);
+
             }
         } catch (error) {
             throw new Error(error.message);
@@ -102,51 +92,32 @@ class PokemonService extends GenericService {
 
     async updatePokemonByName(name, pokemonData) {
         try {
-            if (pokemonData.type) {
+            if (pokemonData.type){
                 // Check if all types are valid
-                const invalidTypes = pokemonData.type.filter((type) => !validTypes.includes(type));
+                const invalidTypes = pokemonData.type.filter(type => !validTypes.includes(type));
                 if (invalidTypes.length > 0) {
                     throw new Error(`Invalid Pokemon type(s): ${invalidTypes.join(', ')}`);
                 }
             }
             const updatedPokemon = await this.updateDocumentByField({ name: { $regex: new RegExp(`^${name}$`, 'i') } }, pokemonData);
-
             const cacheKey = 'all_pokemon';
-            const cachedData = await getAsync(cacheKey);
-
-            if (cachedData) {
-                const pokemonList = JSON.parse(cachedData);
-                const updatedPokemonList = pokemonList.map((p) => (p.name.toLowerCase() === name.toLowerCase() ? updatedPokemon : p));
-
-                await setAsync(cacheKey, JSON.stringify(updatedPokemonList), 3600); // Cache for 1 hour
-            }
-
+            await client.del(cacheKey);
             return updatedPokemon;
         } catch (error) {
             throw new Error(error.message);
         }
     }
 
-    async createPokemon(pokemonData) {
+    async createPokemon(pokemonData){
         try {
             const newPokemon = await this.createDocument(pokemonData);
-
             const cacheKey = 'all_pokemon';
-            const cachedData = await getAsync(cacheKey);
-
-            if (cachedData) {
-                const pokemonList = JSON.parse(cachedData);
-                const updatedPokemonList = [...pokemonList, newPokemon];
-
-                await setAsync(cacheKey, JSON.stringify(updatedPokemonList), 3600); // Cache for 1 hour
-            }
-
+            await client.del(cacheKey);
             return newPokemon;
         } catch (error) {
             throw new Error(error.message);
         }
     };
-
     async bulkCreatePokemon(pokemonList) {
         const newPokemonList = [];
         const errorMessages = [];
@@ -168,21 +139,11 @@ class PokemonService extends GenericService {
                 });
             }
         }
-
         const cacheKey = 'all_pokemon';
-        const cachedData = await getAsync(cacheKey);
-
-        if (cachedData) {
-            const pokemonList = JSON.parse(cachedData);
-            const updatedPokemonList = [...pokemonList, ...newPokemonList];
-            await setAsync(cacheKey, JSON.stringify(updatedPokemonList), 3600); // Cache for 1 hour
-        }
-
+        await client.del(cacheKey);
         return { newPokemonList, errorMessages };
     }
 
-
-
-        }
+}
 
 module.exports = new PokemonService();
