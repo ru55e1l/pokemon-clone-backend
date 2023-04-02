@@ -141,14 +141,14 @@ router.post('/login', async (req, res) => {
         const refreshToken = await trainerService.createRefreshToken(trainer._id, device);
 
         // Set the cookies
-        res.cookie('id', trainer._id, {
+        res.cookie('trainerId', trainer._id, {
             signed: true,
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day
             secure: process.env.NODE_ENV === 'production',
         });
 
-        res.cookie('refresh', refreshToken.token, {
+        res.cookie('refreshToken', refreshToken.token, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             secure: process.env.NODE_ENV === 'production',
@@ -221,14 +221,14 @@ router.post('/refresh', async (req, res) => {
         // Create a new refresh token for the specific device
         const newRefreshToken = await trainerService.createRefreshToken(trainerId, device);
 
-        res.cookie('id', trainerId, {
+        res.cookie('trainerId', trainerId, {
             signed: true,
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000, // 1 day
             secure: process.env.NODE_ENV === 'production',
         });
 
-        res.cookie('refresh', newRefreshToken.token, {
+        res.cookie('refreshToken', newRefreshToken.token, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             secure: process.env.NODE_ENV === 'production',
@@ -241,7 +241,40 @@ router.post('/refresh', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/trainer/logout:
+ *   post:
+ *     summary: Logout a trainer and clear their cookies
+ *     tags: [Trainer]
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal Server Error
+ */
+router.post('/logout', async (req, res) => {
+    try {
+        const trainerId = req.signedCookies.trainerId;
+        if (trainerId) {
+            await trainerService.deleteRefreshTokenByTrainerId(trainerId);
+        }
 
+        res.clearCookie('trainerId');
+        res.clearCookie('refreshToken');
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 
 

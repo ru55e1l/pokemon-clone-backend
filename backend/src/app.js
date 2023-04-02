@@ -43,6 +43,6 @@ mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true, useU
     .catch((err) => console.log(err));
 
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(port, () => {
+app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });

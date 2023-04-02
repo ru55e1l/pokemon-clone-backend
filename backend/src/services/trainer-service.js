@@ -98,6 +98,11 @@ class TrainerService extends GenericService {
         await RefreshToken.deleteOne({ token });
     }
 
+    async deleteRefreshTokenByTrainerId(trainerId) {
+        await RefreshToken.deleteMany({ trainerId });
+    }
+
+
 
 }
 
