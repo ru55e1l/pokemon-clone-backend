@@ -144,13 +144,13 @@ router.post('/login', async (req, res) => {
         res.cookie('trainerId', trainer._id, {
             signed: true,
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            maxAge: process.env.TRAINER_LIFE,
             secure: process.env.NODE_ENV === 'production',
         });
 
         res.cookie('refreshToken', refreshToken.token, {
             httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            maxAge: process.env.REFRESH_LIFE,
             secure: process.env.NODE_ENV === 'production',
         });
 
@@ -203,7 +203,7 @@ router.post('/login', async (req, res) => {
  */
 router.post('/refresh', async (req, res) => {
     try {
-        const oldRefreshToken = req.cookies.refresh;
+        const oldRefreshToken = req.cookies.refreshToken;
 
         if (!oldRefreshToken) {
             return res.status(401).json({ message: 'No refresh token provided' });
@@ -224,13 +224,13 @@ router.post('/refresh', async (req, res) => {
         res.cookie('trainerId', trainerId, {
             signed: true,
             httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            maxAge: process.env.TRAINER_LIFE,
             secure: process.env.NODE_ENV === 'production',
         });
 
         res.cookie('refreshToken', newRefreshToken.token, {
             httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            maxAge: process.env.REFRESH_LIFE,
             secure: process.env.NODE_ENV === 'production',
         });
 

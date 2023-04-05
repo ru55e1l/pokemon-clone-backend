@@ -26,13 +26,13 @@ module.exports = async (req, res, next) => {
             res.cookie('trainerId', newTrainerId, {
                 signed: true,
                 httpOnly: true,
-                maxAge: 24 * 60 * 60 * 1000, // 1 day
+                maxAge: process.env.TRAINER_LIFE,
                 secure: process.env.NODE_ENV === 'production',
             });
 
             res.cookie('refreshToken', newRefreshToken.token, {
                 httpOnly: true,
-                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                maxAge: process.env.REFRESH_LIFE,
                 secure: process.env.NODE_ENV === 'production',
             });
 

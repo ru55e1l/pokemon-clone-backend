@@ -7,6 +7,7 @@ const swaggerOptions = require('./swaggeroptions');
 const https = require('https');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 // routes
 const trainerRouter = require('./routes/trainer-router');
@@ -22,6 +23,7 @@ const credentials = { key: privateKey, cert: certificate };
 
 
 const app = express();
+app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}))
 app.use(cookieParser(process.env.SECRET))
 app.use(express.json()); // for parsing application/json
 const port = process.env.PORT || 1434;
