@@ -88,6 +88,21 @@ class ActivePokemonService extends GenericService {
         }
     }
 
+    async getActivePokemonByTrainerId(trainerId) {
+        try {
+            const trainer = await trainerService.getDocumentById(trainerId);
+            if (!trainer) {
+                throw new Error('Trainer not found');
+            }
+
+            const activePokemon = await this.getDocumentsByField({ trainer: trainer._id, equipped: true });
+            return activePokemon;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
     // activePokemonService.js
     async isPokemonEquipped(id) {
         try {
