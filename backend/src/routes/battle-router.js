@@ -26,9 +26,9 @@ const battleService = require('../services/battle/battleService');
  *               - trainer1
  *               - trainer2
  *             properties:
- *               trainer1:
+ *               trainer1Id:
  *                 type: string
- *               trainer2:
+ *               trainer2Id:
  *                 type: string
  *     responses:
  *       '201':
