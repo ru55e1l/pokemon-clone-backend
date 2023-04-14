@@ -4,6 +4,7 @@ const completedBattleService = require('./battle-complete-service');
 const activePokemonService = require('../pokemon/active-pokemon-service');
 const moveService = require('../move-service');
 const typeEffectiveness = require('../../constants/Move/typeEffectiveness');
+const pokemonService = require('../pokemon/pokemon-service');
 
 class BattleService  {
 
@@ -112,16 +113,24 @@ class BattleService  {
         }
 
         // Calculate damage
-        const damage = this.calculateDamage(activePokemon.stats, move, target.stats, typeEffectiveness);
+        const damage = await this.calculateDamage(activePokemon, target, move);
+
+        // Find the target Pokemon in the activeBattle
+        const targetIndex1 = activeBattle.activePokemon1.findIndex(pokemon => pokemon.activePokemonId.equals(targetId));
+        const targetIndex2 = activeBattle.activePokemon2.findIndex(pokemon => pokemon.activePokemonId.equals(targetId));
 
         // Apply damage
-        target.currentHealth -= damage;
-        if (target.currentHealth < 0) {
-            target.currentHealth = 0;
+        if (targetIndex1 >= 0) {
+            activeBattle.activePokemon1[targetIndex1].currentHealth -= damage;
+            if (activeBattle.activePokemon1[targetIndex1].currentHealth < 0) {
+                activeBattle.activePokemon1[targetIndex1].currentHealth = 0;
+            }
+        } else {
+            activeBattle.activePokemon2[targetIndex2].currentHealth -= damage;
+            if (activeBattle.activePokemon2[targetIndex2].currentHealth < 0) {
+                activeBattle.activePokemon2[targetIndex2].currentHealth = 0;
+            }
         }
-
-        // Update target Pokemon health
-        await activePokemonService.updateDocumentById(targetId, {currentHealth: target.currentHealth});
 
         // Update turn
         activeBattle.trainer1Turn = !activeBattle.trainer1Turn;
@@ -141,7 +150,7 @@ class BattleService  {
             };
         } else {
             // Save the updated activeBattle and return it
-            await activeBattle.save();
+            await battleActiveService.updateDocumentById(activeBattle._id, activeBattle);
             return activeBattle;
         }
     }
@@ -152,11 +161,14 @@ class BattleService  {
     calculateTypeEffectiveness(moveType, targetType) {
         return typeEffectiveness[moveType][targetType];
     }
-    calculateDamage(attacker, defender, move) {
-        const attackStat = move.category === 'physical' ? attacker.stats.attack : attacker.stats.specialAttack;
-        const defenseStat = move.category === 'physical' ? defender.stats.defense : defender.stats.specialDefense;
+    async calculateDamage(attacker, defender, move) {
+        const attackStat = attacker.stats.attack;
+        const defenseStat = defender.stats.defense;
 
-        const typeEffectivenessMultiplier = this.calculateTypeEffectiveness(move.type, defender.type);
+        const defenderPokemon = await pokemonService.getDocumentById(defender.pokemon);
+        const defenderType = defenderPokemon.type[0];
+
+        const typeEffectivenessMultiplier = this.calculateTypeEffectiveness(move.type, defenderType);
         const levelFactor = 2 * attacker.level / 5 + 2;
         const baseDamage = Math.floor((levelFactor * move.power * attackStat / defenseStat) / 50) + 2;
         const damage = Math.floor(baseDamage * typeEffectivenessMultiplier);

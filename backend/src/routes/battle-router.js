@@ -126,11 +126,14 @@ router.post('/end', [auth, user], async (req, res) => {
  *             type: object
  *             required:
  *               - battleId
+ *               - activePokemonId
  *               - moveId
  *               - targetPokemonId
  *             properties:
  *               battleId:
  *                 type: string
+ *               activePokemonId:
+ *                  type: string
  *               moveId:
  *                 type: string
  *               targetPokemonId:
@@ -147,8 +150,8 @@ router.post('/end', [auth, user], async (req, res) => {
  */
 router.post('/makeMove', [auth, user], async (req, res) => {
     try {
-        const { battleId, moveId, targetPokemonId } = req.body;
-        const updatedBattle = await battleService.makeMove(battleId, moveId, targetPokemonId);
+        const { battleId, activePokemonId, moveId, targetPokemonId } = req.body;
+        const updatedBattle = await battleService.makeMove(battleId, req.trainer.id, activePokemonId, moveId, targetPokemonId);
         res.status(200).json(updatedBattle);
     } catch (error) {
         res.status(400).json({ message: error.message });
