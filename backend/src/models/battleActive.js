@@ -24,6 +24,11 @@ const activeBattleSchema = new mongoose.Schema({
             return trainer !== null;
         },
     },
+    trainer1Turn: {
+        type: Boolean,
+        required: false,
+        default: true
+    },
     activePokemon1: [
         {
             _id: false,
